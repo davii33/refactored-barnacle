@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Opinião Remunerada</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(120deg, #f1f1f1, #dff9fb);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: white;
+      width: 100%;
+      max-width: 440px;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #2c3e50;
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 15px;
+      display: block;
+      color: #444;
+    }
+
+    input, select, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      background-color: #27ae60;
+      color: white;
+      font-weight: bold;
+      border: none;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background-color: #219150;
+      transform: scale(1.03);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .saldo {
+      background: linear-gradient(to right, #a8e063, #56ab2f);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: bold;
+      color: white;
+      font-size: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sacar-btn {
+      margin-top: 20px;
+      background-color: #f39c12;
+    }
+
+    .stars {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .star {
+      font-size: 28px;
+      cursor: pointer;
+      color: #ccc;
+      transition: color 0.2s;
+    }
+
+    .star.selected {
+      color: #f1c40f;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: white;
+      border-left: 6px solid #2ecc71;
+      color: #2c3e50;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.4s ease;
+      z-index: 999;
+    }
+
+    .toast img {
+      width: 24px;
+      height: 24px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    #fimDasAvaliacoes {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #e74c3c;
+      text-align: center;
+    }
+
+    .logo {
+      display: block;
+      max-width: 120px;
+      margin: 0 auto 20px;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="toast" id="toast">
+  <img src="verificado.png" alt="Verificado" id="toastIcon">
+  <span id="toastMessage"></span>
+</div>
+
+<!-- Tela de Login -->
+<div class="container" id="loginScreen">
+  <img src="logo.png" alt="Logo do site" class="logo" id="siteLogo">
+  <h2>Entrar</h2>
+  <label for="email">Seu E-mail:</label>
+  <input type="email" id="email" placeholder="exemplo@email.com">
+  <button id="entrarBtn">Entrar</button>
+</div>
+
+<!-- Tela Principal -->
+<div class="container hidden" id="mainScreen">
+  <h2>Opinião Remunerada</h2>
+
+  <div class="saldo" id="saldoDisplay">Saldo disponível: R$100,00</div>
+
+  <label for="marca">Escolha a Marca:</label>
+  <select id="marca">
+    <option value="">Selecione...</option>
+    <option>Nike</option>
+    <option>Adidas</option>
+    <option>Spotify</option>
+    <option>Netflix</option>
+    <option>Apple</option>
+    <option>Samsung</option>
+  </select>
+
+  <label for="categoria">Categoria de Avaliação:</label>
+  <select id="categoria">
+    <option value="">Escolha...</option>
+    <option>Produto</option>
+    <option>Atendimento</option>
+    <option>Preço</option>
+    <option>Qualidade</option>
+  </select>
+
+  <label>Avaliação (estrelas):</label>
+  <div class="stars" id="stars">
+    <span class="star" onclick="setStars(1)">★</span>
+    <span class="star" onclick="setStars(2)">★</span>
+    <span class="star" onclick="setStars(3)">★</span>
+    <span class="star" onclick="setStars(4)">★</span>
+    <span class="star" onclick="setStars(5)">★</span>
+  </div>
+
+  <label for="comentario">Comentário:</label>
+  <textarea id="comentario" placeholder="Conte o que achou da marca..."></textarea>
+
+  <button onclick="enviar()">Enviar Avaliação</button>
+  <div id="fimDasAvaliacoes" class="hidden">Você avaliou todas as marcas! Agora você pode sacar seu saldo.</div>
+  <button class="sacar-btn" onclick="sacar()">Sacar Saldo</button>
+</div>
+
+<!-- Tela de Saque -->
+<div class="container hidden" id="saqueScreen">
+  <h2>Antes de Sacar</h2>
+  <p id="mensagemSaque"></p>
+  <button onclick="pagarTaxa()">Pagar Taxa de Segurança</button>
+</div>
+
+<script>
+  let saldo = 100;
+  let estrelasSelecionadas = 0;
+
+  function setStars(qtd) {
+    estrelasSelecionadas = qtd;
+    const estrelas = document.querySelectorAll(".star");
+    estrelas.forEach((el, i) => {
+      el.classList.toggle("selected", i < qtd);
+    });
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById("toast");
+    const toastMessage = document.getElementById("toastMessage");
+    toastMessage.innerText = msg;
+    toast.classList.add("show");
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 3000);
+  }
+
+  function atualizarSaldoAnimado(valorGanho) {
+    const saldoDisplay = document.getElementById("saldoDisplay");
+    let inicio = saldo - valorGanho;
+    let final = saldo;
+    let atual = inicio;
+    let incremento = (final - inicio) / 40;
+
+    let anim = setInterval(() => {
+      atual += incremento;
+      if (atual >= final) {
+        atual = final;
+        clearInterval(anim);
+      }
+      saldoDisplay.innerText = `Saldo disponível: R$${atual.toFixed(2)}`;
+    }, 15);
+  }
+
+  function enviar() {
+    const marcaSelect = document.getElementById("marca");
+    const marca = marcaSelect.value;
+    const categoria = document.getElementById("categoria").value;
+    const comentario = document.getElementById("comentario").value.trim();
+
+    if (!marca || !categoria || estrelasSelecionadas === 0 || comentario === "") {
+      alert("Preencha todos os campos.");
+      return;
+    }
+
+    const ganho = Math.random() * 50 + 50;
+    saldo += ganho;
+    atualizarSaldoAnimado(ganho);
+
+    showToast(`Avaliação enviada! Você ganhou R$${ganho.toFixed(2)}.`);
+
+    marcaSelect.querySelector(`option[value="${marca}"]`).remove();
+
+    document.getElementById("categoria").value = "";
+    document.getElementById("comentario").value = "";
+    marcaSelect.value = "";
+    setStars(0);
+
+    if (marcaSelect.options.length === 1) {
+      document.getElementById("fimDasAvaliacoes").classList.remove("hidden");
+    }
+  }
+
+  function sacar() {
+    document.getElementById("mainScreen").classList.add("hidden");
+    document.getElementById("saqueScreen").classList.remove("hidden");
+
+    document.getElementById("mensagemSaque").innerText =
+      `Você tem R$${saldo.toFixed(2)} disponível para saque.\n\nPara liberar o saldo, é necessário realizar o pagamento de uma taxa anti-fraude\n\n🔒 Por que cobramos uma taxa de R$19,90?\n\nA taxa de R$19,90 é uma medida de segurança anti-fraude que utilizamos para proteger nosso sistema e garantir que apenas usuários reais e comprometidos realizem saques.\n`;
+  }
+
+  function pagarTaxa() {
+    window.location.href = "https://pay.sunize.com.br/qZPAAcXF";
+  }
+
+  function fazerLogin() {
+    const email = document.getElementById("email").value;
+    if (email.includes("@") && email.includes(".")) {
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("mainScreen").classList.remove("hidden");
+    } else {
+      alert("Digite um e-mail válido.");
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("entrarBtn").addEventListener("click", fazerLogin);
+  });
+</script>
+</body>
+</html>
