@@ -188,6 +188,40 @@
       font-weight: 500;
       color: #c0392b;
     }
+    
+    /* Balõezinhos flutuantes de saque */
+.saque-fake {
+  position: fixed;
+  left: 20px;
+  bottom: -50px;
+  background: #2ecc71;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  animation: subirSaque 6s ease-out forwards;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  z-index: 999;
+  opacity: 0.9;
+}
+
+@keyframes subirSaque {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-300px);
+    opacity: 0;
+  }
+}
 
     @media (max-width: 480px) {
       .container {
@@ -346,6 +380,58 @@
   function toggleDarkMode() {
     document.body.classList.toggle("dark-mode");
   }
+  
+  const nomes = [
+  "João da Silva", "Maria Oliveira", "Pedro Santos", "Ana Costa", 
+  "Lucas Almeida", "Vitória Souza", "Bruno Carvalho", "Juliana Lima",
+  "Carlos Fernandes", "Aline Rocha", "Mateus Martins", "Larissa Gonçalves"
+];
+
+function gerarValorAleatorio() {
+  return (Math.floor(Math.random() * 950) + 50).toFixed(2);
+}
+
+function criarBalão() {
+  const nome = nomes[Math.floor(Math.random() * nomes.length)];
+  const valor = gerarValorAleatorio();
+  const balao = document.createElement("div");
+
+  balao.className = "floating-notification";
+  balao.innerHTML = `<strong>${nome}</strong> sacou <span style="color:green">R$ ${valor}</span>`;
+  document.body.appendChild(balao);
+
+  // estilo direto pra centralizar no meio inferior
+  balao.style.position = "fixed";
+  balao.style.bottom = "20px";
+  balao.style.left = "50%";
+  balao.style.transform = "translateX(-50%)";
+  balao.style.background = "#e6ffe6";
+  balao.style.padding = "10px 20px";
+  balao.style.borderRadius = "25px";
+  balao.style.color = "#333";
+  balao.style.fontWeight = "bold";
+  balao.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.15)";
+  balao.style.opacity = "1";
+  balao.style.zIndex = "9999";
+
+  // animação de subida
+  balao.animate([
+    { transform: "translate(-50%, 0)", opacity: 1 },
+    { transform: "translate(-50%, -40px)", opacity: 0 }
+  ], {
+    duration: 2000,
+    easing: "ease-out",
+    fill: "forwards"
+  });
+
+  // remove depois de animar
+  setTimeout(() => {
+    balao.remove();
+  }, 2200);
+}
+
+// intervalo com tempo mais realista
+setInterval(criarBalão, 5500);
 
   document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("entrarBtn").addEventListener("click", fazerLogin);
