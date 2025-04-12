@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Painel de Saque</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 50px auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    .saldo {
+      background: #f0f0f0;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 18px;
+      color: #222;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      color: #555;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-top: 5px;
+    }
+
+    button {
+      margin-top: 25px;
+      width: 100%;
+      padding: 12px;
+      background: #4CAF50;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    .mensagem {
+      margin-top: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2> Taxa Anti-Fraude Paga! ✅</h2>
+
+    <div class="saldo">
+      Saldo disponível: <span id="saldo">R$ 739,39</span>
+    </div>
+
+    <label for="cpf">CPF</label>
+    <input type="text" id="cpf" placeholder="123.456.789-10" maxlength="14">
+
+    <label for="valor">Valor para sacar</label>
+    <input type="number" id="valor" placeholder="Digite o valor" step="0.01">
+
+    <button onclick="realizarSaque()">Solicitar Saque</button>
+
+    <div class="mensagem" id="mensagem"></div>
+  </div>
+
+  <script>
+    let saldoAtual = 739.39;
+
+    function formatarCPF(cpf) {
+      cpf = cpf.replace(/\D/g, "");
+      if (cpf.length > 3) cpf = cpf.slice(0, 3) + "." + cpf.slice(3);
+      if (cpf.length > 7) cpf = cpf.slice(0, 7) + "." + cpf.slice(7);
+      if (cpf.length > 11) cpf = cpf.slice(0, 11) + "-" + cpf.slice(11, 13);
+      return cpf.slice(0, 14);
+    }
+
+    document.getElementById("cpf").addEventListener("input", function () {
+      this.value = formatarCPF(this.value);
+    });
+
+    function formatarReal(valor) {
+      return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function realizarSaque() {
+      const cpf = document.getElementById("cpf").value.trim();
+      const valor = parseFloat(document.getElementById("valor").value.replace(",", "."));
+      const mensagem = document.getElementById("mensagem");
+
+      const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+
+      if (!cpfRegex.test(cpf)) {
+        mensagem.innerText = "CPF inválido. Use o formato 123.456.789-10.";
+        mensagem.style.color = "red";
+        return;
+      }
+
+      if (isNaN(valor) || valor <= 0) {
+        mensagem.innerText = "Digite um valor válido.";
+        mensagem.style.color = "red";
+        return;
+      }
+
+      if (valor > saldoAtual) {
+        mensagem.innerText = "Você não pode sacar mais do que o saldo disponível.";
+        mensagem.style.color = "red";
+        return;
+      }
+
+      mensagem.innerText = `Saque de  solicitado com sucesso!`;
+      mensagem.style.color = "green";
+    }
+  </script>
+
+</body>
+</html>
